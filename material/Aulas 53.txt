@@ -1,0 +1,145 @@
+----------- SEÇÃO 9 - AULA 53 -----------
+
+* Front-end
+
+$ cd email-worker-compose
+
+** Editar o docker-compose.yml
+
+version: '2'
+volumes:
+  dados:
+services:
+  db:
+    image: postgres:9.6
+    volumes:
+      #Volmues dos dados
+      - dados:/var/lib/postgresql/data
+      #Scripts
+      - ./scripts:/scripts
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+  frontend:
+    image: nginx:1.13
+    volumes: 
+      # Site
+      - ./web:/usr/share/nginx/html/
+    ports:
+      - 80:80
+
+$ mkdir web
+$ cd web
+$ touch index.html
+$ chmod 777 index.html
+
+<html>
+	<head>
+		<meta charset='utf-8'>
+		
+		<title>E-mail Sender</title>
+		
+		<style>
+			label { display: block; }
+			textarea, input { width: 400px; }
+		</style>
+	</head>
+	<body class="container">
+		<h1>E-mail Sender</h1>
+		<form action="">
+			<div>
+				<label for="assunto">Assunto</label>
+				<input type="text" name="assunto">
+			</div>
+			
+			<div>
+				<label for="mensagem">Mensagem</label>
+				<textarea name="" cols="50" rows="6"></textarea>
+			</div>
+			
+			<div>
+				<button>Enviar !</button>
+			</div>
+	</body>
+</html>
+
+
+$ docker-compose ps
+$ docker-compose down
+$ docker-compose up -d
+$ docker-compose logs -f -t
+
+** Acessar o endereço http://192.168.0.20/
+
+
+----------- SEÇÃO 9 - AULA 54 -----------
+
+* Filas
+
+
+$ mkdir app
+$ cd app
+$ touch app.sh
+$ chmod 777 app.sh
+
+#!/bin/sh
+
+pip install bottle==0.12.13
+python -u sender.py
+
+$ touch sender.py
+$ chmod 777 sender.py
+
+from bottle import route, run, request
+
+@route('/', method='POST')
+def send():
+	assunto = request.forms.get('assunto')
+	mensagem = request.forms.get('mensagem')
+	return 'Mensagem enfileirada ! Assunto: {} Mensagem: {}'.format(
+		assunto, mensagem
+	)
+
+if _name_ == '_main_':
+	run(host='0.0.0.0', port=8080, debug=True)
+
+
+** Editar o index.html e ajusta a linha abaixo:
+
+		<form action="http://localhost:8080" method="POST">
+		
+** Editar o docker-compose.yml
+
+version: '2'
+volumes:
+  dados:
+services:
+  db:
+    image: postgres:9.6
+    volumes:
+      #Volmues dos dados
+      - dados:/var/lib/postgresql/data
+      #Scripts
+      - ./scripts:/scripts
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+  frontend:
+    image: nginx:1.13
+    volumes: 
+      # Site
+      - ./web:/usr/share/nginx/html/
+    ports:
+      - 80:80
+  app:
+    image: python:3.6
+    volumes:
+      # Aplicação
+      - ./app:/app
+    working_dir: /app
+    command: ./app.sh
+    ports:
+      - 8080:8080
+
+** Parar o serviço do docker-compose CTRL+C
+
+$ docker-compose ps
+$ docker-compose down
+$ docker-compose up -d
+$ docker-compose logs -f -t

@@ -1,0 +1,100 @@
+----------- SEÇÃO 9 - AULA 60 -----------
+
+* Override
+
+$ touch docker-compose.override.yml
+$ chmod 777 docker-compose.override.yml
+
+** Editando docker-compose.override.yml
+
+version: '2'
+services:
+  app:
+    environment:
+      - DB_NAME=email_sender
+
+
+
+** Editando docker-compose.yml
+
+version: '2'
+volumes:
+  dados:
+networks:
+  banco:
+  web:
+  fila:
+services:
+  db:
+    image: postgres:9.6
+    volumes:
+      #Volmues dos dados
+      - dados:/var/lib/postgresql/data
+      #Scripts
+      - ./scripts:/scripts
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - banco
+  frontend:
+    image: nginx:1.13
+    volumes: 
+      # Site
+      - ./web:/usr/share/nginx/html/
+      # Configuração do proxy reverso
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+    networks:
+      - web
+    depends_on:
+      - app
+  app:
+    image: python:3.6
+    volumes:
+      # Aplicação
+      - ./app:/app
+    working_dir: /app
+    command: bash ./app.sh
+    networks:
+      - banco
+      - web
+      - fila
+    depends_on:
+      - db
+      - queue
+    environment:
+      - DB_NAME=email_sender
+  queue:
+    image: redis:3.2
+    networks: 
+      - fila
+  worker:
+    build: worker
+    volumes:
+      # Worker
+      - ./worker:/worker
+    working_dir: /worker
+    command: worker.py
+    networks: 
+      - fila
+    depends_on:
+      - queue	
+	
+	
+
+
+$ docker-compose down
+$ docker-compose up -d
+$ docker-compose scale worker=3
+$ docker-compose exec db psql -U postgres -d email_sender -c 'select * from emails'
+
+  id |            data            |     assunto     |           mensagem
+----+----------------------------+-----------------+-------------------------------
+  2 | 2018-05-23 10:05:44.903285 | SerÃ¡ que vai   | vai ou nÃ£o vai
+  3 | 2018-05-24 09:47:08.517054 | Teste de Worker | Texto do teste de worker
+  4 | 2018-05-28 09:49:57.788099 | Varios workes   | docker-compose up -d\r       +
+    |                            |                 | docker-compose scale worker=3
+  5 | 2018-05-29 09:25:28.051037 | mais um teste   | ultima aula - mais um teste
+  6 | 2018-05-29 09:35:39.814061 | mais um teste   | ultima aula - mais um teste
+  7 | 2018-05-29 09:35:41.771725 | mais um teste   | ultima aula - mais um teste
+  8 | 2018-05-29 09:36:21.952191 | ultimo teste    | ultimo teste - assim espero

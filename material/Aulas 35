@@ -1,0 +1,20 @@
+----------- SEÇÃO 5 - AULA 35 -----------
+
+* Meu primeiro build
+
+$ mkdir primeiro-build
+$ cd primeiro-build
+$ touch Dockerfile
+$ chmod 777 Dockerfile
+	
+	Dockerfile								(Descritor)
+
+	FROM nginx:latest
+	RUN echo '<h1>Hello World !</h1>' > /usr/share/nginx/html/index.html
+
+$ docker image build -t ex-simple-buil .
+	
+	-t 									(TAG (Nome) que você vai colocar na imagem)
+	.									(Usa a pasta local para ler o Dockerfile)
+
+& docker container run -p 80:80 ex-simple-build

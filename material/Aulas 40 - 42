@@ -1,0 +1,68 @@
+----------- SEÇÃO 5 - AULA 40 -----------
+
+* Enviar Imagens para o Docker Hub
+
+** Criar conta no https://hub.docker.com/
+	
+	cadardo
+	cm060307
+
+$ docker image ls
+$ docker image tag ex-simple-build cadardo/simple-build:1.0														(Criando uma nova imagem, versionada, ela é copia fiel da ex-simple-build, com o mesmo IMAGE ID)
+$ docker image ls
+$ docker login --username=cadardo																				(Logando no docker hub)
+$ docker image push cadardo/simple-build:1.0																	(Envio da imagem para a conta do docker hub logada. Basta dar um refresh no browser)
+
+
+----------- SEÇÃO 6 - AULA 41 -----------
+
+* Visão Geral e Tipos de Redes
+
+** Existem 4 modelos, porém no curso serão abordados 3 modelos que já vem na instalação padrão do docker
+
+$ docker network ls
+
+	NETWORK ID          NAME                DRIVER              SCOPE
+	98b1dd5d09f4        bridge              bridge              local
+	7cdc6b83de83        host                host                local
+	76b9fdaae02d        none                null                local
+
+
+----------- SEÇÃO 6 - AULA 42 -----------
+
+* Rede Tipo Nome (Sem Rede)
+
+$ docker container run --rm alpine ash -c "ifconfig"								(Executando o ifconfig dentro da imagem do alpine)
+	--rm 																			(Já vai apagar o container no fim da execução0
+	alpine																			(imagem escolhida)
+	ash																				(Bash mais leve, disponibilizado no alpine)
+
+	eth0      Link encap:Ethernet  HWaddr 02:42:AC:11:00:02  
+    	      inet addr:172.17.0.2  Bcast:172.17.255.255  Mask:255.255.0.0
+        	  UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+	          RX packets:2 errors:0 dropped:0 overruns:0 frame:0
+	          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+	          collisions:0 txqueuelen:0 
+	          RX bytes:180 (180.0 B)  TX bytes:0 (0.0 B)
+
+	lo        Link encap:Local Loopback  
+	          inet addr:127.0.0.1  Mask:255.0.0.0
+	          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+	          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+	          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+	          collisions:0 txqueuelen:1000 
+	          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+
+
+$ docker container run --rm --net none alpine ash -c "ifconfig"						(Definindo a imagem com rede none e executando o ifconfig dentro da imagem do alpine)
+	--net none																		(Definindo a imagem com rede none - sem rede)
+	
+	lo        Link encap:Local Loopback  
+	          inet addr:127.0.0.1  Mask:255.0.0.0
+	          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+	          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+	          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+	          collisions:0 txqueuelen:1000 
+	          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+	

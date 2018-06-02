@@ -1,0 +1,93 @@
+----------- SEÇÃO 4 - AULA 26 -----------
+
+* Rodar um servidor web em background
+
+$ docker container run -d --name ex-deamon-basic -p 8080:80 -v $(pwd)/html
+
+     -d							(Modo deamon - Background)
+     --name						(Nome do container)
+     -p 						(postas de acesso externo:interno)
+     -v							(Mepeando volumes de acesso local:container
+
+**Codigo gerado após executar o comando é o ID do container
+adafd22b91dde6c7f2130018b8bd460a41bb11c28a906d8f68864a1f9e927ca1
+
+$ docker container ps 					(Verifica a execução do container)
+$ docker container stop ex-deamon-basic			(Para a execução do container através do nome do container)
+
+
+----------- SEÇÃO 4 - AULA 27 -----------
+
+* Gerenciar o container em background
+
+$ docker container start ex-deamon-basic		(Inicia a execução do container através do nome do container)
+$ docker container restart ex-deamon-basic		(Reinicia a execução do container através do nome do container)
+$ docker container stop adafd22b91dd			(Para a execução do container através do CONTAINERID)
+
+
+----------- SEÇÃO 4 - AULA 28 -----------
+
+* Manipulação de containers em modo daemon
+
+$ docker container ls					(Lista os Containers ativos)
+$ docker container list					(Lista os Containers ativos)
+$ docker container ps					(Lista os Containers ativos)
+
+$ docker container ls -a				(Lista os Containers que já foram criados, mesmo os partos em qualquer status)
+$ docker container list -a				(Lista os Containers que já foram criados, mesmo os partos em qualquer status)
+$ docker container ps -a				(Lista os Containers que já foram criados, mesmo os partos em qualquer status)
+
+$ docker container start ex-deamon-basic		(Inicia a execução do container através do nome do container)
+$ docker container logs ex-deamon-basic			(Acessa os logs do container ex-deamon-basic)
+$ docker container inspect ex-deamon-basic		(Verifica o JSON do container ex-deamon-basic)
+$ docker container exec ex-deamon-basic uname -or	(Qual tipo de sistema está sendo executado dentro do meu container)
+
+
+----------- SEÇÃO 4 - AULA 29 -----------
+
+* Nova sintaxe do Docker Client
+
+$ docker container ls												(Lista os Containers ativos)
+$ docker image ls													(Lista as Imagens existentes)
+$ docker volume ls													(Lista os Volumes existentes na sua máquina local)
+$ docker rmi adafd22b91dd											(Remove a imagem pelo CONTAINERID na sintaxe antiga)
+$ docker rm adafd22b91dd											(Remove a container pelo CONTAINERID na sintaxe antiga)
+$ docker image rm adafd22b91dd										(Remove a imagem pelo CONTAINERID na sintaxe nova)
+
+
+----------- SEÇÃO 5 - AULA 30 -----------
+
+* Introdução
+
+
+----------- SEÇÃO 5 - AULA 31 -----------
+
+* Diferenças entre Container e Imagem
+
+** Imagem é o modelo sistema de arquivos para a criação de containers
+** Container é o processo isolado
+
+$ docker container --help				(Mostra os comandos para executar em um container)
+$ docker image --help					(Mostra os comandos para executar em uma imagem)
+$ docker volume --help					(Mostra os comandos para executar em um volume)
+
+
+----------- SEÇÃO 5 - AULA 32 -----------
+
+* Entendendo melhor as imagens
+
+$ docker image pull redis:latest			(Baixa a última versão da imagem do REDIS)
+$ docker image ls					(Lista as Imagens existentes)
+$ docker container inspect redis:latest			(Verifica o JSON do container REDIS)
+$ docker container tag redis:latest cod3r-redis		(Cria uma nova versão da imagem com o nome cod3r-redis)
+$ docker image rm redis:latest cod3r-redis		(Exclui as duas imagens)
+
+
+
+
+
+
+
+
+
+

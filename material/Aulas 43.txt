@@ -1,0 +1,71 @@
+----------- SEÇÃO 6 - AULA 43 -----------
+
+* Rede Tipo Bridge
+
+$ cd curso-docker
+$ docker network ls
+
+	NETWORK ID          NAME                DRIVER              SCOPE
+	e669027a90d8        bridge              bridge              local
+	7cdc6b83de83        host                host                local
+	76b9fdaae02d        none                null                local
+
+$ docker network inspect bridge
+$ docker container run -d --name container1 alpine sleep 1000
+$ docker container exec -it container1 ifconfig
+$ docker container run -d --name container2 alpine sleep 1000
+$ docker container exec -it container2 ifconfig
+$ docker container exec -it container1 ping 172.17.0.3
+$ docker container exec -it container1 ping www.google.com
+
+** Passos para criar uma nova rede
+
+$ docker network create --driver bridge rede_nova
+$ docker network ls
+
+	NETWORK ID          NAME                DRIVER              SCOPE
+	e669027a90d8        bridge              bridge              local
+	7cdc6b83de83        host                host                local
+	76b9fdaae02d        none                null                local
+	b2a87019fb53        rede_nova           bridge              local
+
+$ docker network inspect rede_nova
+$ docker container run -d --name container3 --net rede_nova alpine sleep 1000
+$ docker container exec -it container3 ifconfig
+$ docker container inspect container1
+
+ "IPAddress": "172.17.0.2",
+
+$ docker container exec -it container3 ping 172.17.0.2
+
+** Configurar o container3 para ele se conectar a rede bridge, ficando com acesso a rede_nova e a rede bridge
+
+$ docker network connect bridge container3
+$ docker container exec -it container3 ifconfig
+$ docker container exec -it container3 ping 172.17.0.2
+
+** Desconectar a rede adicionada
+
+$ docker network disconnect bridge container3
+$ docker container exec -it container3 ifconfig
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

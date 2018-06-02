@@ -1,0 +1,439 @@
+----------- SEÇÃO 8 - AULA 49 -----------
+
+* Finalizando o Cadastro
+
+** Editar o arquivo "app.js", ficando igual conteúdo abaixo:
+
+	const express = require('express')
+	const restful = require('node-restful')
+	const server = express()
+	const mongoose = restful.mongoose
+	const bodyParser = require('body-parser')
+	const cors = require('cors')
+	
+	// Database
+	mongoose.Promise = global.Promise
+	mongoose.connect('mongodb://db/mydb')
+	
+	//Middlewares
+	server.use(bodyParser.urlencoded({extended:true}))
+	server.use(bodyParser.json())
+	server.use(cors())
+	
+	//ODM
+	const Client = restful.model('Client', {
+		name: { type: String, required: true }
+	})
+	
+	//Rest API
+	Client.methods(['get', 'post', 'put', 'delete'])
+	Client.updateOptions({new: true, runValidators: true})
+	
+	//Routes
+	Client.register(server, '/clients')
+	
+	// Start Server
+	server.listen(3000)
+
+** Editar o arquivo "index.html", ficando igual conteúdo abaixo:
+
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>Cadastro Simples</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	</head>
+	<body>
+		<div class="container">
+			<h1>Cadastro Simples</h1>
+			<hr>
+			<div>
+				<input name='id' type='hidden' />
+				<div class="form-group">
+					<label for="Name"></label>
+					<input class='form-control' name='name' placeholder='Digite o nome' />
+				</div>
+				<button class='btn btn-success' save>Salvar</button>
+			</div>
+			
+			<table class="table" id='clients'>
+				<thead>
+					<tr>
+						<th>Nome</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+				<tbody id="clientsRows"></tbody>
+			</table>
+		</div>
+		
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+		
+		<script>
+			const API = 'http://192.168.0.20:3000'
+			
+			const getClients = () => {
+				$.ajax({
+					url: `${API}/clients`,
+					success: clients => {
+						console.log(clients)
+					}
+				)}
+			})
+			
+			$(() => {
+				getClients()
+			})
+		</script>
+	</body>
+</html>
+
+** Parar (CTRL+C) e iniciar o docker-compose
+
+$ docker-compose up
+
+** Acessar o link: http://192.168.0.20/
+** Editar novametne o "index.html" colocando igual abaixo:
+
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>Cadastro Simples</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	</head>
+	<body>
+		<div class="container">
+			<h1>Cadastro Simples</h1>
+			<hr>
+			<div>
+				<input name='id' type='hidden' />
+				<div class="form-group">
+					<label for="Name"></label>
+					<input class='form-control' name='name' placeholder='Digite o nome' />
+				</div>
+				<button class='btn btn-success' save>Salvar</button>
+			</div>
+			
+			<table class="table" id='clients'>
+				<thead>
+					<tr>
+						<th>Nome</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+				<tbody id="clientsRows"></tbody>
+			</table>
+		</div>
+		
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+		
+		<script>
+			const API = 'http://192.168.0.20:3000'
+			
+			const getClients = () => {
+				$.ajax({
+					url: `${API}/clients`,
+					success: clients => {
+						console.log(clients)
+					}
+				})
+			}
+			
+			const saveClient = () => {
+				const _id = $('[name=id]').val()
+				const name = $('[name=name]').val()
+				$.ajax({
+					method: _id ? 'PUT' : 'POST',
+					url: `${API}/clients/${_id}`,
+					data: _id ? { _id, name } : { name },
+					success: getClients
+				})
+			}
+			
+			$(() => {
+				getClients()
+				$('[save]').click(saveClient)
+			})
+		</script>
+	</body>
+</html>
+
+
+** Acessar o link: http://192.168.0.20/
+** Editar novametne o "index.html" colocando igual abaixo:
+
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>Cadastro Simples</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	</head>
+	<body>
+		<div class="container">
+			<h1>Cadastro Simples</h1>
+			<hr>
+			<div>
+				<input name='id' type='hidden' />
+				<div class="form-group">
+					<label for="Name"></label>
+					<input class='form-control' name='name' placeholder='Digite o nome' />
+				</div>
+				<button class='btn btn-success' save>Salvar</button>
+			</div>
+			
+			<table class="table" id='clients'>
+				<thead>
+					<tr>
+						<th>Nome</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+				<tbody id="clientsRows"></tbody>
+			</table>
+		</div>
+		
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+		
+		<script>
+			const API = 'http://192.168.0.20:3000'
+			
+			const createButton = (label, type) => {
+				return $('<button>').addClass(`btn btn-${type}`).html(label)
+			}
+			
+			const renderRows = clients => {
+				const rows = clients.map(client => {
+					const updateButton = createButton('Atualizar', 'warning')
+					const removeButton = createButton('Excluir', 'danger')
+					
+					return $('<tr>')
+						.append($('<td>').append(client.name))
+						.append($('<td>').append(updateButton).append(removeButton))
+				})
+				
+				$('#clientsRows').html(rows)
+			}
+			
+			const getClients = () => {
+				$.ajax({
+					url: `${API}/clients`,
+					success: clients => {
+						renderRows(clients)
+					}
+				})
+			}
+			
+			const saveClient = () => {
+				const _id = $('[name=id]').val()
+				const name = $('[name=name]').val()
+				$.ajax({
+					method: _id ? 'PUT' : 'POST',
+					url: `${API}/clients/${_id}`,
+					data: _id ? { _id, name } : { name },
+					success: getClients
+				})
+			}
+			
+			$(() => {
+				getClients()
+				$('[save]').click(saveClient)
+			})
+		</script>
+	</body>
+</html>
+
+** Acessar o link: http://192.168.0.20/ 
+** Editar novametne o "index.html" colocando igual abaixo:
+
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>Cadastro Simples</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	</head>
+	<body>
+		<div class="container">
+			<h1>Cadastro Simples</h1>
+			<hr>
+			<div>
+				<input name='id' type='hidden' />
+				<div class="form-group">
+					<label for="Name"></label>
+					<input class='form-control' name='name' placeholder='Digite o nome' />
+				</div>
+				<button class='btn btn-success' save>Salvar</button>
+			</div>
+			
+			<table class="table" id='clients'>
+				<thead>
+					<tr>
+						<th>Nome</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+				<tbody id="clientsRows"></tbody>
+			</table>
+		</div>
+		
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+		
+		<script>
+			const API = 'http://192.168.0.20:3000'
+			
+			const createButton = (label, type) => {
+				return $('<button>').addClass(`btn btn-${type}`).html(label)
+			}
+			
+			const renderRows = clients => {
+				const rows = clients.map(client => {
+					const updateButton = createButton('Atualizar', 'warning')
+					const removeButton = createButton('Excluir', 'danger')
+					removeButton.click(() => removeClient(client))
+					
+					return $('<tr>')
+						.append($('<td>').append(client.name))
+						.append($('<td>').append(updateButton).append(removeButton))
+				})
+				
+				$('#clientsRows').html(rows)
+			}
+			
+			const removeClient = client => {
+				$.ajax({
+					method: 'DELETE',
+					url: `${API}/clients/${client._id}`,
+					success: getClients
+				})
+			}
+			
+			const getClients = () => {
+				$.ajax({
+					url: `${API}/clients`,
+					success: clients => {
+						renderRows(clients)
+					}
+				})
+			}
+			
+			const saveClient = () => {
+				const _id = $('[name=id]').val()
+				const name = $('[name=name]').val()
+				$.ajax({
+					method: _id ? 'PUT' : 'POST',
+					url: `${API}/clients/${_id}`,
+					data: _id ? { _id, name } : { name },
+					success: getClients
+				})
+			}
+			
+			$(() => {
+				getClients()
+				$('[save]').click(saveClient)
+			})
+		</script>
+	</body>
+</html>
+
+** Acessar o link: http://192.168.0.20/ 
+** Editar novametne o "index.html" colocando igual abaixo:
+
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>Cadastro Simples</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	</head>
+	<body>
+		<div class="container">
+			<h1>Cadastro Simples</h1>
+			<hr>
+			<div>
+				<input name='id' type='hidden' />
+				<div class="form-group">
+					<label for="Name"></label>
+					<input class='form-control' name='name' placeholder='Digite o nome' />
+				</div>
+				<button class='btn btn-success' save>Salvar</button>
+			</div>
+			
+			<table class="table" id='clients'>
+				<thead>
+					<tr>
+						<th>Nome</th>
+						<th>Ações</th>
+					</tr>
+				</thead>
+				<tbody id="clientsRows"></tbody>
+			</table>
+		</div>
+		
+		<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+		
+		<script>
+			const API = 'http://192.168.0.20:3000'
+			
+			const createButton = (label, type) => {
+				return $('<button>').addClass(`btn btn-${type}`).html(label)
+			}
+			
+			const renderRows = clients => {
+				const rows = clients.map(client => {
+					const updateButton = createButton('Atualizar', 'warning')
+					updateButton.click(() => loadClient(client))
+					
+					const removeButton = createButton('Excluir', 'danger')
+					removeButton.click(() => removeClient(client))
+					
+					return $('<tr>')
+						.append($('<td>').append(client.name))
+						.append($('<td>').append(updateButton).append(removeButton))
+				})
+				
+				$('#clientsRows').html(rows)
+			}
+			
+			const loadClient = client => {
+				$('[name=id]').val(client._id)
+				$('[name=name]').val(client.name)
+			}
+			
+			const removeClient = client => {
+				$.ajax({
+					method: 'DELETE',
+					url: `${API}/clients/${client._id}`,
+					success: getClients
+				})
+			}
+			
+			const getClients = () => {
+				$.ajax({
+					url: `${API}/clients`,
+					success: clients => {
+						renderRows(clients)
+					}
+				})
+			}
+			
+			const saveClient = () => {
+				const _id = $('[name=id]').val()
+				const name = $('[name=name]').val()
+				$.ajax({
+					method: _id ? 'PUT' : 'POST',
+					url: `${API}/clients/${_id}`,
+					data: _id ? { _id, name } : { name },
+					success: getClients
+				})
+			}
+			
+			$(() => {
+				getClients()
+				$('[save]').click(saveClient)
+			})
+		</script>
+	</body>
+</html>
+
+** Acessar o link: http://192.168.0.20/ e alterar o nome das pessoas
+** Editar novametne o "index.html" colocando igual abaixo:
+
+

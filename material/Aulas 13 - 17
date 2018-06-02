@@ -1,0 +1,110 @@
+----------- SEÇÃO 3 - AULA 13 -----------
+
+- Instalação Windows
+
+* Docker for Windows: Para as versão do windows 10 atualizada (NNF)
+* Docker toolbox: Para as versões anteriores do windows e 10 desatualizada (NNF)
+
+
+----------- SEÇÃO 3 - AULA 14 -----------
+
+- Instalação MAC
+
+* Docker for MAC: Para as versão do MAC atualizada (Clique duplo no arquivo dmg e mover o docker para applications)
+* Docker toolbox: Para as versões anteriores do MAC e desatualizada (NNF)
+
+
+----------- SEÇÃO 3 - AULA 15 -----------
+
+- Instalação Linux
+
+* https://docs.docker.com/install/linux/docker-ce/ubuntu/#install-using-the-repository
+
+	*Install using the repository
+	
+	
+
+$ sudo apt-get update
+
+$ sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    software-properties-common
+
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+
+$ sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+$ sudo apt-get update
+
+$ sudo apt-get install docker-ce
+
+
+----------- SEÇÃO 4 - AULA 16 -----------
+
+- Introdução ao Docker Client
+
+* Uso do Docker como usuário
+
+
+----------- SEÇÃO 4 - AULA 17 -----------
+
+* Hello World: Meu Docker Funciona!
+
+$ docker container run hello-world
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

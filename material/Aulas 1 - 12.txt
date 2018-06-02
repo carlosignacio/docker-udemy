@@ -1,0 +1,82 @@
+------------- SEÇÃO 1 - DOCKER - AULA 1,2,3,4,5 ---------------
+
+* Introdução e indicação da Apostila
+* Demonstração do Perfil dos Professores
+
+Apostila do Curso: http://files.cod3r.com.br/apostila-docker.pdf
+Repositório do Curso: https://github.com/cod3rcursos/curso-docker
+
+
+------------- SEÇÃO 2 - DOCKER - AULA 6 ---------------
+
+- O que é Docker?
+
+1 - Não é um sistema de virtualização tradicional
+2 - Engine de Administração de Containers
+3 - Utiliza os serviços do LXC - Linux Containers
+4 - Open Source e Escrito em GO
+5 - Sistema de Virtualização Baseado em Software (SO)
+6 - O host e container compartilham o Kernel
+7 - Empacota o software com vários níveis de isolamento
+
+
+------------- SEÇÃO 2 - DOCKER - AULA 7 ---------------
+
+- Por que não uma VM?
+
+Docker Engine
+
+------------- SEÇÃO 2 - DOCKER - AULA 8 ---------------
+
+- O que são containers?
+
+V - Segregação de processos no mesmo Kernel (Isolamento)
+V - Sistemas de arquivos criados a partir de uma imagem
+V - Ambientes leve e portáteis no qual as aplicações são executadas
+V - Encapsula todos os binarios e bibliotecas necessárias para a execução de uma App
+V - Algo entre um chroot e uma VM
+
+------------- SEÇÃO 2 - DOCKER - AULA 9 ---------------
+
+- O que são imagens Docker?
+
+V - Modelo de sistema de arquivo somente-leitura usado para criar containes
+V - Imagens são criadas através de um processo chamado build
+	* Descritor (Dockerfile)
+V - São armazenadas em repositórios no Registry
+	* Docker Hub 
+	* Tags (Versões)
+V - São compostas por uma ou mais camadas (layers)
+	* Mudanças na imagem
+	* Uma layer para cada mudança
+V - Uma camada representa uma ou mais mudanças no sistema de arquivo
+	* Quando o container for iniciado é criada uma layer que permite escrita
+V - Uma camada é também chamada de imagem intermediária
+V - A junção dessas camadas formam a imagem
+V - A apenas a última camada pode ser alterada quando o container for iniciado
+V - AUFS (Advanced multi-layered unification filesystem) é muito usado
+V - O grande objetivo dessa e3stratégia de dividir uma imagem em camadas é o reuso
+V - É possível compor imagens a partir de camadas de outras imagens
+
+------------- SEÇÃO 2 - DOCKER - AULA 10 ---------------
+
+- Imagem Vs Container
+
+* Imagen é o modelo
+* Constainer é um objeto
+A partir de uma imagem podes ter multiplos containers
+
+
+------------- SEÇÃO 2 - DOCKER - AULA 11 ---------------
+
+- Arquitetura
+
+* Docker Daemon, Docker Server e Docker Engine são Sinonimos
+* Client, Host e Registry
+
+
+------------- SEÇÃO 3 - DOCKER - AULA 12 ---------------
+
+- Instalação - Visão Geral
+
+

@@ -1,0 +1,150 @@
+----------- SEÇÃO 6 - AULA 44 -----------
+
+* Rede Tipo Host
+
+$ ifconfig
+$ docker container run -d --name container4 --net host alpine sleep 1000
+$ docker container exec -it container4 ifconfig
+
+
+----------- SEÇÃO 7 - AULA 45 -----------
+
+* Introdução
+
+** Um container para cada serviço
+** Usando docker-compose - Startup dos seus containers
+
+
+----------- SEÇÃO 7 - AULA 46 -----------
+
+* Gerenciamento de micro service
+
+** Orquestrando no docker-compose
+** Organizando os micro-serviços, com várias imagens
+
+
+----------- SEÇÃO 8 - AULA 47 -----------
+
+* Estrutura Inicial
+
+$ mkdir node-mongo-compose
+$ cd node-mongo-compose
+$ mkdir backend
+$ cd backend
+$ touch app.js
+$ chmod 777 app.js
+$ cd ..
+$ mkdir frontend
+$ cd frontend
+$ touch index.html
+$ chmod 777 index.html
+
+	<h1>Frontend</h1>
+
+$ cd ..
+$ touch docker-compose.yml
+$ chmod 777 docker-compose.yml
+$ cd backend
+$ npm init -y
+
+** caso não funcione o comando acima, é porque não tem o node instalado.
+
+$ apt-get install npm																						(Instalando o npm)
+$ npm init -y																								(Agora deve funcionar)
+$ npm i --save express@4.15.3 mongoose@4.11.1 node-restful@0.2.6 body-parser@1.17.2 cors@2.8.3  			(Instalando Mongo e suas dependencias)
+$ ls																										(Verificar se a pasta node_modules  foi criada)
+$ rm -rf node_modules
+$ ls																										(Verificar se a pasta node_modules  foi apagada)
+$ ls																										(Verificar se existe o package.json)
+
+** Caso não exista basta somente criar e colar o conteúdo abaixo:
+
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.17.2",
+    "cors": "^2.8.3",
+    "express": "^4.15.3",
+    "mongoose": "^4.11.1",
+    "node-restful": "^0.2.6"
+  }
+}
+
+
+----------- SEÇÃO 8 - AULA 48 -----------
+
+* Configurando Ambiente com Compose
+
+** Abrir o app.js e incluir o texto abaixo
+
+	const express = require('express')
+	const restful = require('node-restful')
+	const server = express()
+	const mongoose = restful.mongoose
+	
+	// Database
+	mongoose.Promise = global.Promise
+	mongoose.connect('mongodb://db/mydb')
+	
+	// Teste
+	server.get('/', (req, res, next) => res.send('Backend'))
+	
+	// Start Server
+	server.listen(3000)
+
+** Abrir o docker-compose.yml e incluir o texto abaixo - ||| Criando 3 serviços "db = MONGO, backend = NODEJS, frontend = NGINX" ||| Para o meu teste foi necessário ajustar o version para 2
+
+version: '3'
+services: 
+  db: 
+    image: mongo:3.4
+  backend:
+    image: node:8.1
+    volumes: 
+      - ./backend:/backend
+    ports:
+      - 3000:3000
+    command: bash -c "cd /backend && npm i && node app"
+  frontend:
+    image: nginx:1.13
+    volumes:
+      - ./frontend:/usr/share/nginx/html/
+    ports:
+      - 80:80
+
+$ cd ..																															(Acessando a pasta node-mongo-compose)
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+$ apt-get install docker-compose																								(Foi necessário abrir outro terminal e baixar o docker compose)
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+$ docker-compose up
+
+** Acessar os links abaixo:
+
+http://192.168.0.20/																											(Aparecer a palavra Frontend)
+http://192.168.0.20:3000/																										(Aparecer a palavra Backend)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,21 @@
+----------- SEÇÃO 5 - AULA 33 -----------
+
+* Comandos básicos no gerenciamento de imagens
+
+$ docker image pull								(Responsável por baixar a imagem do dockerhub)
+$ docker image ls								(Responsável por listar as imagens existentes no host)
+$ docker image rm <tag>								(Responsável por remover uma imagem existentes no host)
+$ docker image inspect <tag>							(Responsável por mostrar uma documento JSON contendo informações da imagem)
+$ docker image tag 								(Responsável por criar uma nova TAG a partir de uma imagem)
+$ docker image build								(Responsável por criar uma nova imagem)
+$ docker image push								(Responsável por publicar uma nova imagem no registry local ou no dockerhub)
+
+
+----------- SEÇÃO 5 - AULA 34 -----------
+
+* Docker Hub X Docker Registry
+
+** Docker Registry 								Serviço server side para obtenção de imagens via api
+** Docker Registry								É um SAS - Software as Service
+
+

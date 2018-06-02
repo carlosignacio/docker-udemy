@@ -1,0 +1,97 @@
+----------- SEÇÃO 5 - AULA 38 -----------
+
+
+* Uso das instruções para execução do container (Parte 1)
+
+
+$ mkdir build-dev
+$ cd build-dev
+$ touch index.html
+$ chmod 777 index.html
+	
+	<p>Hello from python</p>
+	
+$ touch run.py
+$ chmod 777 run.py
+	
+	import logging
+	import http.server
+	import socketserver
+	import getpass
+
+		class MyHTTPHandler(http.server.SimpleHTTPRequestHandler):
+			def log_message(self, format, *args):
+				logging.info("%s - - [%s] %s\n"% (
+					self.client_address[0],
+					self.log_date_time_string(),
+					format%args
+				))
+		logging.basicConfig(
+			filename='/log/http-server.log',
+			format='%(asctime)s - %(levelname)s - %(message)s',
+			level=logging.INFO
+		)
+		logging.getLogger().addHandler(logging.StreamHandler())
+		logging.info('inicializando...')
+		PORT = 8000
+
+		httpd = socketserver.TCPServer(("", PORT), MyHTTPHandler)
+		logging.info('escutando a porta: %s', PORT)
+		logging.info('usuário: %s', getpass.getuser())
+		httpd.serve_forever()
+
+
+----------- SEÇÃO 5 - AULA 39 -----------
+
+
+* Uso das instruções para execução do container (Parte 2)
+
+$ cd build-dev
+$ touch Dockerfile
+$ chmod 777 Dockerfile
+
+	FROM python:3.6
+	LABEL maintainer 'cadardo@hotmail.com'
+
+	RUN useradd www && \
+		mkdir /app && \
+		mkdir /log && \
+		chown www /log
+	
+	USER www
+	VOLUME /log
+	WORKDIR /app
+	EXPOSE 8000
+
+	ENTRYPOINT ["/usr/local/bin/python"]
+	CMD ["run.py"]
+
+$ docker image build -t ex-build-dev .
+$ docker container run -it -v $(pwd):/app -p 80:8000 --name puthon-server ex-build-dev
+
+	-it																					(Modo interativo, visualizando os logs no console durante a execução)
+	-v																					(Mapeando o volume)
+	$(pwd)																				(Diretório atual)
+	
+* Acessar o browser 
+	
+	http://localhost/
+	
+$ docker container run -it --volumes-from=python-server debian cat /log/http-server.log	(Criando um container para ler os logs criados no container anterior usando uma imagem debian)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,95 @@
+----------- SEÇÃO 5 - AULA 36 -----------
+
+* Uso das instruções de preparação
+
+$ mkdir build-com-arg
+$ chmod 777 build-com-arg
+$ cd build-com-arg
+$ touch Dockerfile
+$ chmod 777 Dockerfile
+	
+
+	Dockerfile								(Descritor)
+
+	FROM debian
+	LABEL maintainer 'cadardo@hotmail.com'
+
+	ARG S3_BUCKET=files
+	ENV S3_BUCKET=${S3_BUCKET}
+
+
+$ docker image build -t ex-build-arg .
+	
+	-t 									(TAG (Nome) que você vai colocar na imagem)
+	.									(Usa a pasta local para ler o Dockerfile)
+
+& docker container run ex-build-arg bash -c 'echo $S3_BUCKET'
+** Mostra o argumento padrão do S3_BUCKET existente no Dockerfile
+
+& docker image build --build-arg echo $S3_BUCKET=myapp -t ex-build-arg .
+** Definindo o valor do argumento S3_BUCKET ao criar a imagem
+
+& docker container run ex-build-arg bash -c 'echo $S3_BUCKET'
+** Mostra o argumento padrão do S3_BUCKET existente no Dockerfile
+
+$ docker image inspect --format="{{index .Config.Labels \"maintainer\"}}" ex-build-arg
+** Filtro para mostrar uma informação dentro da imagem, que no exemplo é o mantenedor
+
+
+
+----------- SEÇÃO 5 - AULA 37 -----------
+
+* Uso das instruções de povoamento
+
+$ mkdir build-com-copy
+$ chmod 777 build-com-copy
+$ cd build-com-copy
+$ touch index.html
+$ chmod 777 index.html
+
+	<a href="conteudo.html">Conteudo do site</a>
+
+$ touch Dockerfile
+$ chmod 777 Dockerfile
+
+	FROM nginx
+	LABEL maintainer 'cadardo@hotmail.com'
+
+	RUN echo '<h1>Sem conteudo</h1>' > /usr/share/nginx/html/conteudo.html
+	COPY *.html /usr/share/nginx/html/
+
+$ docker image build -t ex-build-copy .
+& docker container run -p 80:80 ex-build-copy
+
+** acessar o browser
+	localhost
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

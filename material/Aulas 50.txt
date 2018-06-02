@@ -1,0 +1,107 @@
+----------- SEÇÃO 9 - AULA 50 -----------
+
+* Visão Geral
+
+--- Projeto E-mail com Workers ---
+
+Rede: Web - nginx
+Rede: Banco - postgres
+APP: python
+WORKER_1: python
+WORKER_2: python
+WORKER_3: python
+QUEUE: redis
+
+* Passos do Projeto *
+- Iniciando a composição com o Banco de dados
+- Usando volumes e scripts de banco de dados
+- Começando nossa camada front-end
+- Aplicativo para enfileirar as mensagens
+- Configurando proxy reverso
+- Redes, dependência e banco de dados
+- Fila e workers
+- Escalar é preciso
+- 12 Factors
+- Sobrescrevendo localmente
+
+----------- SEÇÃO 9 - AULA 51 -----------
+
+* Banco de Dados
+
+$ mkdir email-worker-compose
+$ cd email-worker-compose
+$ touch docker-compose.yml
+$ chmod 777 docker-compose.yml
+
+version: '2'
+services:
+  db:
+    image: postgres:9.6
+
+$ docker-compose up -d																						(Inicializa em modo daemon)
+$ docker-compose ps																							(Verificar processos executando)
+$ docker-compose exec db psql -U postgres -c '\l'
+	exec																									(executar os comandos dentro do serviço)
+	db																										(service que será executado os comandos)
+	psql																									(é o que será executado)
+	-U postgres																								(usuário postgres)
+	-c																										(para identificar qual comando)
+	'\l'																									(listar os bancos de dados dentro da instancia ativa. é uma sintaxe do psql)
+
+$ docker-compose down																						(Para os serviços)
+
+
+----------- SEÇÃO 9 - AULA 52 -----------
+
+* Volumes
+
+$ mkdir scripts
+$ cd scripts
+$ touch init.sql
+$ chmod 777 init.sql
+
+create database email_sender;
+
+\c email_sender
+
+create table emails (
+	id serial not null,
+	data timestamp not null default current_timestamp,
+	assunto varchar(100) not null,
+	mensagem varchar(250) not null
+);
+
+$ touch check.sql
+$ chmod 777 check.sql
+
+\l
+\c email_sender
+\d emails
+
+**Editar o docker-compose.yml
+
+version: '2'
+volumes:
+  dados:
+services:
+  db:
+    image: postgres:9.6
+    volumes:
+      #Volmues dos dados
+      - dados:/var/lib/postgresql/data
+      #Scripts
+      - ./scripts:/scripts
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+	  
+$ docker-compose ps
+$ docker-compose up -d	
+$ docker-compose ps
+$ docker-compose exec db psql -U postgres -f /scripts/check.sql
+	-f																										(identificar que vai ser usado um arquivo (file))
+
+
+
+
+
+
+

@@ -1,0 +1,97 @@
+----------- SEÇÃO 9 - AULA 56 -----------
+
+* Redes
+
+** Editando docker-compose-yml
+
+version: '2'
+volumes:
+  dados:
+networks:
+  banco:
+    web:
+services:
+  db:
+    image: postgres:9.6
+    volumes:
+      #Volmues dos dados
+      - dados:/var/lib/postgresql/data
+      #Scripts
+      - ./scripts:/scripts
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - banco
+  frontend:
+    image: nginx:1.13
+    volumes: 
+      # Site
+      - ./web:/usr/share/nginx/html/
+      # Configuração do proxy reverso
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+    networks:
+      - web
+    depends_on:
+      - app
+  app:
+    image: python:3.6
+    volumes:
+      # Aplicação
+      - ./app:/app
+    working_dir: /app
+    command: bash ./app.sh
+    networks:
+      - banco
+      - web
+    depends_on:
+      -db
+
+
+
+** Editando app.sh
+
+#!/bin/sh
+
+pip install bottle==0.12.13 psycopg2==2.7.1
+python -u sender.py
+
+
+** Editando sender.py
+
+import psycopg2
+from bottle import route, run, request
+
+DSN = 'dbname=email_sender user=postegre host:db'
+SQL = 'INSERT INTO emails (assunto, mensagem) VALUES (%s, %s)'
+
+def register_message(assunto, mensagem):
+	conn = psycopg2.connect(DSN)
+	cur = conn.cursor()
+	cur.execute(SQL, (assunto, mensagem))
+	cur.commit()
+	cur.close()
+	conn.close()
+	
+	print('Mensagem registrada !')
+
+@route('/', method='POST')
+def send():
+	assunto = request.forms.get('assunto')
+	mensagem = request.forms.get('mensagem')
+	
+	register_message(assunto, mensagem)
+	return 'Mensagem enfileirada ! Assunto: {} Mensagem: {}'.format(
+		assunto, mensagem
+	)
+
+if __name__ == '__main__':
+	run(host='0.0.0.0', port=8080, debug=True)
+
+	
+	
+$ docker-compose up -d
+$ docker-compose ps
+
+docker-compose exec db psql -U postgres -d email_sender -c 'select * from emails'
+

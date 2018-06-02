@@ -1,0 +1,181 @@
+----------- SEÇÃO 4 - AULA 18 -----------
+
+* Meu querido amigo run
+
+$ docker container run hello-world
+  
+  - run
+    + docker imagem pull
+    + docker container create
+    + docker container start
+    + docker container exec
+		  
+----------- SEÇÃO 4 - AULA 19 -----------
+
+* Ferramentas diferentes
+
+$ bash --version 												(Verifica a versão do bash utilizada na máquina)
+$ docker container run debian bash --version
+$ ps
+$ docker container ps 											(Mostra todos os containers ativos)
+$ docker container ps -a 										(Mostra todos os containers que foram executados, independete do status)
+$ docker container run --rm debian bash --version 				(Não deixa registro na lista do comando "docker container ps -a")
+
+
+----------- SEÇÃO 4 - AULA 20 -----------
+
+* Run cria sempre novos containers
+
+$ docker container run -it debian bash 							(Acesso ao terminal do container Debian)
+     -i 														acesso ao modo interativo
+      t 														acesso ao terminal
+$ touch curso-docker.txt 										(Cria um arquivo txt dentro do container Debian, pois o comando anterior acessou o terminal do Debian)
+$ ls curso-docker.txt 											(Valida se o arquivo foi realmente criado dentro do container)
+$ exit 															(Sair do container)
+$ docker container run -it debian bash 							(Criou um novo container)
+$ ls curso-docker.txt 											(Não vai existir)
+$ exit 															(Sair do container)
+
+----------- SEÇÃO 4 - AULA 21 -----------
+
+* Containers devem ter nomes únicos
+
+$ docker container run --name meudebian -it debian bash 		(Cria um container com o nome "meudebian")
+$ exit
+$ docker container run --name meudebian -it debian bash 		(Não vai permitir com o mesmo nome)
+
+
+----------- SEÇÃO 4 - AULA 22 -----------
+
+* Reutilizar containers
+
+$ docker container ls
+$ docker container ls -a
+$ docker container start -ai meudebian
+     -a 														(atach ao terminal - Permitir acesso ao terminal)
+      i 														(Modo Interativo)
+$ touch curso-docker.txt
+$ exit
+$ docker container start -ai meudebian
+$ ls 															(Vai aparecer o arquivo "curso-docker.txt")
+
+
+----------- SEÇÃO 4 - AULA 23 -----------
+
+* Cego, surdo e mudo, só que não!
+
+$ O interessante é deixar o acesso para uma porta, uma pasta, para que seja possível uma comunicação com o host ou outros containers
+
+----------- SEÇÃO 4 - AULA 24 -----------
+
+* Mapear portas dos containers
+
+$ docker container run -p 8080:80 nginx
+     - 8080 													é a porta externa
+     - 80 														é a porta interna que o serviço vai acessar dentro do container
+
+** Abrir um novo terminal
+$ curl http://localhost:8080 									(Vai abrir o html do nginx)
+* O mesmo serve para o Browser
+$ docker container ps 											(Vai listar os containers ativos)
+
+
+----------- SEÇÃO 4 - AULA 25 -----------
+
+* Mapear diretorios para o container (Volumes)
+
+$ cd /home/cadardo
+$ mkdir curso-docker
+$ cd curso-docker
+$ mkdir ex-volume
+$ cd ex-volume
+$ docker container run -p 8080:80 -v $(pwd)/notfound:/usr/share/nginx/html nginx
+     
+      8080 														(porta de acesso externo
+      80 														(porta de acesso de dentro do container)
+      -v 														mapear volume
+      $(pwd)/notfound 											(pasta local)
+      /usr/share/nginx/html 									(pasta da imagem)
+      nginx 													(nome da imagem)
+
+$ mkdir html
+$ cd html
+$ touch index.txt
+
+<html>
+  <head>
+     <title>Cruso de Docker</title>
+  </head>
+  <body>
+     <h1>Cruso de Docker</h1>
+  </body>
+</html>
+
+docker container run -p 8080:80 -v $(pwd)/html:/usr/share/nginx/html nginx
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

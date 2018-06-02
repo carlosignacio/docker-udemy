@@ -1,3 +1,23 @@
+----------- SEÇÃO 9 - AULA 58 -----------
+
+* Múltiplas instâncias
+
+$ cd worker
+$ touch Dockerfile
+$ chmod 777 Dockerfile
+
+** Editando Dockerfile
+
+FROM python:3.6
+LABEL maintainer 'cadardo@hotmail.com'
+
+ENV PYTHONUNBUFFERED 1
+RUN pip install redis==2.10.5
+
+ENTRYPOINT [ "/usr/local/bin/python" ]
+
+** Editando docker-compose.yml
+
 version: '2'
 volumes:
   dados:
@@ -43,8 +63,6 @@ services:
     depends_on:
       - db
       - queue
-    environment:
-      - DB_NAME=abc_sender
   queue:
     image: redis:3.2
     networks: 
@@ -60,3 +78,28 @@ services:
       - fila
     depends_on:
       - queue
+
+
+** Editando worker.py
+
+import redis
+import json
+from time import sleep
+from random import randint
+
+if __name__== '__main__':
+    r = redis.Redis(host='queue', port=6379, db=0)
+    print('Aguardando mensagens...')
+    while True:
+        mensagem = json.loads(r.blpop('sender')[1])
+        # Simulando envio de e-mail...
+        print('Encaminhando a mensagem:', mensagem['assunto'])
+        sleep(randint(15, 45))
+        print('Mensagem', mensagem['assunto'], 'Mensagem encaminhada com sucesso')	
+	
+	
+	
+$ cd ..
+$ docker-compose ps
+$ docker-compose up -d 
+$ docker-compose scale worker=3
